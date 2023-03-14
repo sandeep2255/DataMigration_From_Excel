@@ -26,34 +26,56 @@ function App() {
           headers[header] = value;
         }
 
-        if(!dataArr[rowNum])dataArr[rowNum] = {};
+        if(!dataArr[rowNum]) dataArr[rowNum] = {};
         dataArr[rowNum][headers[header]] = value;
       }
-      console.log(dataArr);
-      dataArr.shift();
-      setExcelData(dataArr);
+      const dataArray = dataArr.slice(2);
+      setExcelData(dataArray);
     };
     reader.readAsArrayBuffer(file)
   };
   
+  const RenderExcelData = () => {
+      const header = excelData.length > 0 ? Object.keys(excelData[0]) : [];
+      return header;
+  }
+ 
+
+
   return (
     <div className="App">
       <h1>MIGRATION APPLICATION</h1>
       <div className='UploadFile'>
         <label htmlFor='excel-file'>Upload Excel File:</label>
         <input type="file" id='excel-file' name='excel-file' accept='.xlsx, .xls' onChange={handleFileUpload} />
-        {excelData.map((row, index)=>(
-          <div key={index} className="view-details">
-            {Object.values(row).map((value,index)=>(
-              <div key={index} className = "inDetails">
-                {value}
-              </div>
-            ))}
+          <div className='view-details'>
+            <table>
+              <thead>
+                <tr>
+                {RenderExcelData().map((headerItem, index)=>(
+                  <th key={index} className = 'vertical-heading'>
+                  <span>{headerItem}</span>
+                  </th>
+                ))}
+                </tr>
+                </thead>
+                <tbody>
+                    {excelData.map((row, index)=>(
+                      <tr key={index}>
+                      {Object.values(row).map((value, index)=>(
+                        <td key={index}>
+                          {value}
+                        </td>
+                      ))}
+                      </tr>
+                    ))}
+                </tbody>
+            </table>
           </div>
-        ))}
       </div>
     </div>
   );
+  
 }
 
 export default App;
